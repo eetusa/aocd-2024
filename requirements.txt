@@ -1,0 +1,7 @@
+advent-of-code-data==2.0.4
+aocd-example-parser==2023.12.2
+beautifulsoup4==4.12.2
+Pebble==5.0.4
+soupsieve==2.5
+tzdata==2023.3
+urllib3==2.1.0
