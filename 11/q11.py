@@ -29,7 +29,6 @@ def get_map_total(stone_map: Dict[int, int]):
 
 def blink(initial_stone_map: Dict[int, int], blink_count: int):
     stone_map = initial_stone_map
-    print(stone_map)
 
     for i in range(0, blink_count):
         new_stones: Dict[int, int] = {}
@@ -60,7 +59,7 @@ def solve(input: str, blink_count: int, excercise: str) -> int:
 
     stone_count = blink(stone_map, blink_count)
     print(f'Solve ({excercise}): {stone_count}')
+    return stone_count
 
-#solve("125 17", 6, "example")
 solve(data, 25, "a")
 solve(data, 75, "b")
