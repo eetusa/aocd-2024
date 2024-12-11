@@ -56,6 +56,10 @@ class DoublyLinkedList:
             self.tail = node.previous
         node.next = node.previous = None
 
+    def set_to_empty(self, node: Node):
+        node.id = -1
+        node.empty_space = True
+
     def get_first(self) -> Node:
         return self.head
     
@@ -63,7 +67,6 @@ class DoublyLinkedList:
         return self.tail
     
     def get_tail_pointer_size(self, tail_pointer: Node) -> int:
-       # print(f"Getting tail pointer size, id: {tail_pointer.id}, position: {tail_pointer.position} ")
         pointer_id = tail_pointer.id
         size = 1
         current = tail_pointer
@@ -76,11 +79,9 @@ class DoublyLinkedList:
                 current = current.previous
             else:
                 break
-        #print(f"Tail pointer size: {size}")
         return size
     
     def get_empty_pointer_size(self, empty_pointer: Node) -> int:
-        #print(f"Getting empty pointer size, id: {empty_pointer.id}, position: {empty_pointer.position} ")
         size = 1
         current = empty_pointer
 
@@ -92,11 +93,9 @@ class DoublyLinkedList:
                 current = current.next
             else:
                 break
-        #print(f"Empty pointer size: {size}")
         return size
     
     def move_tail_pointer_to_previous(self, tail_pointer: Node) -> Node:
-        #print(f"Moving tail pointer backwards to next from id: {tail_pointer.id}, position: {tail_pointer.position} ")
         current = tail_pointer
         start_id = current.id
 
@@ -109,23 +108,18 @@ class DoublyLinkedList:
             if current.id == start_id:
                 current = current.previous
                 continue
-            #print(f"Moved tail pointer backwards to: {current.id}, position: {current.position} ")
-            #self.print_list_forward()
             return current
 
     def move_current_pointer_to_next_non_empty(self, current_pointer: Node) -> Node:
-        #print(f"Moving current pointer to next non empty, id: {current_pointer.id}, position: {current_pointer.position} ")
         current = current_pointer
 
         if not current.empty_space:
-            #print("Returning current, non empty")
             return current
 
         while(True):
             if not current.next:
                 return None
             if not current.next.empty_space:
-                #print(f"Moving current pointer to next non empty to id: {current.next.id}, position: {current.next.position} ")
                 return current.previous
             
     def print_list_forward(self):
@@ -135,15 +129,8 @@ class DoublyLinkedList:
                 print(".", end="")
             else:
                 print(current.id, end="")
-                #print(f'ID: {current.id}, Position: {current.position}')
             current = current.next
         print()
-
-    def print_list_backward(self):
-        current = self.tail
-        while current:
-            print(f'ID: {current.id}, Position: {current.position}')
-            current = current.previous
 
     def print_checksum(self):
         checksum = 0
@@ -191,15 +178,15 @@ def optimize_list(linked_list: DoublyLinkedList):
                 previous.next = current
             if next:
                 next.previous = current
-            linked_list.remove(tail)
-            tail = linked_list.get_last()
+            linked_list.set_to_empty(tail)
+            linked_list.tail = tail.previous
+            tail = linked_list.tail
 
         current = current.next
 
 def optimize_list_whole_blocks(linked_list: DoublyLinkedList):
     current = linked_list.get_first()
     tail = linked_list.get_last()
-    #print(tail)
     last_position = tail.position
     linked_list.print_list_forward()
 
@@ -208,7 +195,6 @@ def optimize_list_whole_blocks(linked_list: DoublyLinkedList):
             tail = tail.previous
     tail_size = linked_list.get_tail_pointer_size(tail)
 
-    #tail = linked_list.move_tail_pointer_to_previous()
 
     while(True):
         if current.position >= tail.position:
@@ -220,7 +206,6 @@ def optimize_list_whole_blocks(linked_list: DoublyLinkedList):
             empty_space_size = linked_list.get_empty_pointer_size(current)
 
             if (empty_space_size >= tail_size):
-                #print("Found space!")
                 for i in range(0, tail_size):
                     previous = current.previous
                     next = current.next
@@ -244,7 +229,6 @@ def optimize_list_whole_blocks(linked_list: DoublyLinkedList):
                     tail = tail.previous
                     current = current.next
                 current = linked_list.head
-                #linked_list.print_list_forward()
                 while(tail.empty_space):
                     tail = tail.previous
                 tail_size = linked_list.get_tail_pointer_size(tail)
@@ -267,7 +251,8 @@ def optimize_list_whole_blocks(linked_list: DoublyLinkedList):
                 current = linked_list.head
             else:
                 current = current.next
-# 00...111...2...333.44.5555.6666.777.888899
+
+# Seems that I somehow broke a while doing b, but _should_ now be fixed
 def solve_a(input: str):
     linked_list = DoublyLinkedList()
     parsed_input = parse_input(input)
@@ -275,6 +260,7 @@ def solve_a(input: str):
         add_value_to_list(linked_list, value, index)
 
     optimize_list(linked_list)
+    linked_list.print_list_forward()
     linked_list.print_checksum()
 
 def solve_b(input: str):
@@ -288,4 +274,4 @@ def solve_b(input: str):
 
 # Note: this doubly linked list solution definitely wasn't worth it for B side -- runtime nearly 5 minutes
 solve_a(data)
-solve_b(data)
+solve_b(example)
